@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voni Azali Putra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .nav-link.active {
+            border-bottom-color: #f59e0b; 
+            color: #1e3a8a;
+        }
+        .tab-btn.active {
+            border-bottom-color: #f59e0b;
+            color: #1e3a8a;
+            font-weight: 600;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+    </style>
+    <!-- Chosen Palette: Industrial Neutral (Slate, Blue-900, Amber-500) -->
+    <!-- Application Structure Plan: A single-page dashboard structure is used instead of a linear slide-by-slide format. A sticky navigation header ("Incident", "Analysis", "Response", "Impact", "Recommendations") allows non-linear exploration. The structure transforms the presentation into an interactive case study, starting with high-level KPI cards (Incident & Impact), then allowing deeper exploration via interactive tabs (Analysis) and accordions (Recommendations). This is more usable as users can jump to the sections that interest them most, such as financial impact or key lessons. -->
+    <!-- Visualization & Content Choices: 
+        1. Incident (Slide 1): Info: Key stats (Operation, Risk). Goal: Inform. Method: Styled HTML/Tailwind definition list. Interaction: None. Justification: Sets the context quickly.
+        2. Key Impact Stats (Slide 4): Info: NPT, Cost. Goal: Inform (High-Level). Method: HTML/Tailwind "KPI Cards". Interaction: None. Justification: Brings the "so what" to the top for immediate executive-level summary.
+        3. Root Causes (Slide 2): Info: 3 process gaps. Goal: Organize/Explore. Method: Interactive Tabs (JS). Interaction: Click tabs ("Logistics", "Compliance", "Personnel"). Justification: Condenses complex info into a clean, user-driven component.
+        4. Intervention (Slide 3): Info: 3 supervisor actions. Goal: Inform. Method: Styled HTML/Tailwind "Step" cards in a grid. Interaction: None. Justification: Clearly presents the critical decisions.
+        5. Impact Chart (Slide 4): Info: Target vs. Actual Time. Goal: Compare. Method: Bar Chart (Chart.js/Canvas). Interaction: Tooltip on hover. Justification: Visually demonstrates the 8-hour NPT gap clearly.
+        6. Recommendations (Slide 5): Info: 4 lessons. Goal: Organize/Explore. Method: Accordion (JS). Interaction: Click to expand/collapse. Justification: Keeps the final "action items" section clean and digestible.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans leading-relaxed">
+
+    <header class="sticky top-0 bg-white shadow-md z-50">
+        <nav class="container mx-auto max-w-6xl px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="text-2xl font-bold text-blue-900">Supervisor Training by Paul Elrick</div>
+                <div class="hidden md:flex space-x-6">
+                    <a href="#incident" class="nav-link text-gray-600 hover:text-blue-900 border-b-2 border-transparent transition duration-150 ease-in-out">Incident</a>
+                    <a href="#analysis" class="nav-link text-gray-600 hover:text-blue-900 border-b-2 border-transparent transition duration-150 ease-in-out">Analysis</a>
+                    <a href="#response" class="nav-link text-gray-600 hover:text-blue-900 border-b-2 border-transparent transition duration-150 ease-in-out">Response</a>
+                    <a href="#impact" class="nav-link text-gray-600 hover:text-blue-900 border-b-2 border-transparent transition duration-150 ease-in-out">Impact</a>
+                    <a href="#recommendations" class="nav-link text-gray-600 hover:text-blue-900 border-b-2 border-transparent transition duration-150 ease-in-out">Recommendations</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto max-w-6xl p-4 md:p-8">
+
+        <section id="incident" class="pt-16 -mt-16 mb-12">
+            <h1 class="text-4xl font-bold text-blue-900 mb-4">HPU Failure During Critical Casing Run</h1>
+            <p class="text-lg text-slate-600 mb-6">
+                This interactive report analyzes a critical failure of a Hydraulic Power Unit (HPU) during a 13-3/8" casing running operation. The incident resulted in significant Non-Productive Time (NPT) and highlighted key procedural gaps. This dashboard allows you to explore the incident, the root causes, the supervisor's response, and the financial impact.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                <div>
+                    <h3 class="text-xl font-semibold text-blue-900 mb-3">Operation Context</h3>
+                    <dl class="space-y-2">
+                        <div class="flex justify-between">
+                            <dt class="font-medium text-slate-600">Well Type:</dt>
+                            <dd class="text-right">Highly Deviated Well, Deepwater Block</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="font-medium text-slate-600">Target Time:</dt>
+                            <dd class="text-right">18 Hours (Entire String)</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="font-medium text-slate-600">Status at Failure:</dt>
+                            <dd class="text-right">30% of Casing in Hole (approx. 500m)</dd>
+                        </div>
+                    </dl>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold text-red-700 mb-3">The Incident</h3>
+                    <dl class="space-y-2">
+                        <div class="flex justify-between">
+                            <dt class="font-medium text-slate-600">Failed Component:</dt>
+                            <dd class="text-right font-semibold">Hydraulic Power Unit (HPU)</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="font-medium text-slate-600">Failure Mode:</dt>
+                            <dd class="text-right">Catastrophic hydraulic fluid leak</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="font-medium text-slate-600">Immediate Risk:</dt>
+                            <dd class="text-right font-bold text-red-600 animate-pulse">HIGH - Stuck Pipe Risk</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        </section>
+
+        <section id="analysis" class="pt-16 -mt-16 mb-12">
+            <h2 class="text-3xl font-bold text-blue-900 mb-3">Root Cause Analysis: Supervisory & Process Gaps</h2>
+            <p class="text-lg text-slate-600 mb-6">
+                The direct equipment failure was preventable. The investigation revealed that the incident stemmed from three key process breakdowns. Click each tab below to explore the supervisory gaps that contributed to the failure.
+            </p>
+            
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                <div class="flex border-b border-slate-200 mb-4" id="tab-buttons">
+                    <button data-tab="logistics" class="tab-btn active text-lg py-2 px-4 border-b-4 border-amber-500 text-blue-900 font-semibold">1. Logistics & Inventory</button>
+                    <button data-tab="compliance" class="tab-btn text-lg py-2 px-4 border-b-4 border-transparent text-slate-500 hover:text-slate-700">2. Compliance & QA/QC</button>
+                    <button data-tab="personnel" class="tab-btn text-lg py-2 px-4 border-b-4 border-transparent text-slate-500 hover:text-slate-700">3. Personnel Management</button>
+                </div>
+                
+                <div id="tab-content">
+                    <div id="logistics-content" class="tab-pane">
+                        <h3 class="text-xl font-semibold text-blue-900 mb-2">Absence of Tier-1 Critical Spares</h3>
+                        <p class="text-slate-600">No critical hydraulic spares (hoses, seals, sensors) were available on the rig site. All spares were located at the supply base.</p>
+                        <p class="font-semibold text-red-600 mt-2">Result: Significantly delayed troubleshooting and repair time, guaranteeing NPT.</p>
+                    </div>
+                    <div id="compliance-content" class="tab-pane hidden">
+                        <h3 class="text-xl font-semibold text-blue-900 mb-2">Pre-Job Checklist (PJC) Inaccuracy</h3>
+                        <p class="text-slate-600">The PJC for the HPU was signed off by the operator without physical verification or a proper functional pressure test.</p>
+                        <p class="font-semibold text-red-600 mt-2">Result: Worn components and failing sensors were missed during pre-job checks.</p>
+                    </div>
+                    <div id="personnel-content" class="tab-pane hidden">
+                        <h3 class="text-xl font-semibold text-blue-900 mb-2">Fatigue Management Failure</h3>
+                        <p class="text-slate-600">The HPU operator was working on an extended shift due to a crew shortage, compromising alertness during maintenance checks.</p>
+                        <p class="font-semibold text-red-600 mt-2">Result: Human error compounded the equipment risk, leading to a failure to spot the issue.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="response" class="pt-16 -mt-16 mb-12">
+            <h2 class="text-3xl font-bold text-blue-900 mb-3">Critical Supervisor Intervention</h2>
+            <p class="text-lg text-slate-600 mb-6">
+                Upon notification of the failure, the supervisor's response was focused on three immediate priorities: mitigating well integrity risk, mobilizing resources, and managing stakeholders.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                    <div class="text-3xl font-bold text-amber-500 mb-2">Step 1</div>
+                    <h3 class="text-xl font-semibold text-blue-900 mb-2">Prioritize Well Integrity</h3>
+                    <p class="text-slate-600">Issued an urgent directive to the drilling team to conduct periodic (30-min interval) mud circulation sweeps to prevent the static casing from getting stuck.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                    <div class="text-3xl font-bold text-amber-500 mb-2">Step 2</div>
+                    <h3 class="text-xl font-semibold text-blue-900 mb-2">Mobilize Resources</h3>
+                    <p class="text-slate-600">Activated the Emergency Call-Out protocol for a fully certified backup HPU unit and a specialized hydraulic technician from the supply base.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                    <div class="text-3xl font-bold text-amber-500 mb-2">Step 3</div>
+                    <h3 class="text-xl font-semibold text-blue-900 mb-2">Manage Stakeholders</h3>
+                    <p class="text-slate-600">Established an hourly status report to the Company Man and Rig Manager, providing transparent NPT projections (Worst-Case vs. Best-Case).</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="impact" class="pt-16 -mt-16 mb-12">
+            <h2 class="text-3xl font-bold text-blue-900 mb-3">Recovery and Financial Impact</h2>
+            <p class="text-lg text-slate-600 mb-6">
+                The supervisor's decisive actions successfully mitigated the primary risk of stuck pipe. However, the preventable failure resulted in significant non-productive time and associated financial costs.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col justify-center">
+                    <div class="text-center">
+                        <div class="text-lg font-medium text-slate-600">Total Non-Productive Time</div>
+                        <div class="text-7xl font-bold text-amber-600 my-2">8 <span class="text-5xl">Hours</span></div>
+                    </div>
+                    <div class="text-center mt-6">
+                        <div class="text-lg font-medium text-slate-600">Estimated Cost of NPT</div>
+                        <div class="text-5xl font-bold text-red-700 my-2">$240,000</div>
+                        <p class="text-sm text-slate-500">(Based on Rig Rate of ~$30,000/hr)</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                    <h3 class="text-xl font-semibold text-blue-900 mb-4 text-center">Operation Time: Target vs. Actual</h3>
+                    <div class="chart-container">
+                        <canvas id="nptChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="recommendations" class="pt-16 -mt-16 mb-12">
+            <h2 class="text-3xl font-bold text-blue-900 mb-3">Lessons Learned & The Way Forward</h2>
+            <p class="text-lg text-slate-600 mb-6">
+                The key takeaway is that a significant six-figure NPT cost resulted from a small, preventable spare part failure. The following supervisor-driven recommendations were proposed to build a more resilient TRS operation.
+            </p>
+
+            <div class="space-y-4" id="accordion-container">
+                <div class="accordion-item bg-white border border-slate-200 rounded-lg shadow-sm">
+                    <button class="accordion-header flex justify-between items-center w-full p-5 text-left font-semibold text-lg text-blue-900 hover:bg-slate-50">
+                        <span>1. PQC Dual-Sign-Off</span>
+                        <span class="accordion-icon transform rotate-0 transition-transform duration-300">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="p-5 pt-0 text-slate-600">
+                            <strong class="text-slate-700">Goal:</strong> Ensure true integrity of Pre-Job Checklists.<br>
+                            <strong class="text-slate-700">Action:</strong> Implement a policy where the Technician *and* the Supervisor must co-sign on critical functional tests (e.g., pressure tests, sensor checks) before the job.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item bg-white border border-slate-200 rounded-lg shadow-sm">
+                    <button class="accordion-header flex justify-between items-center w-full p-5 text-left font-semibold text-lg text-blue-900 hover:bg-slate-50">
+                        <span>2. Mandatory Critical Spares Kit</span>
+                        <span class="accordion-icon transform rotate-0 transition-transform duration-300">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="p-5 pt-0 text-slate-600">
+                            <strong class="text-slate-700">Goal:</strong> Eliminate NPT caused by missing inventory.<br>
+                            <strong class="text-slate-700">Action:</strong> Create a standardized **Tier-1 Critical Spares Kit** that must be physically audited and verified on the rig site *before* commencing any TRS operation.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item bg-white border border-slate-200 rounded-lg shadow-sm">
+                    <button class="accordion-header flex justify-between items-center w-full p-5 text-left font-semibold text-lg text-blue-900 hover:bg-slate-50">
+                        <span>3. Fatigue Management System</span>
+                        <span class="accordion-icon transform rotate-0 transition-transform duration-300">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="p-5 pt-0 text-slate-600">
+                            <strong class="text-slate-700">Goal:</strong> Mitigate human error in safety-critical tasks.<br>
+                            <strong class="text-slate-700">Action:</strong> Use digital tracking to enforce maximum working hours for specialized personnel. Implement a mandatory 6-hour rest rule before any safety-critical function.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item bg-white border border-slate-200 rounded-lg shadow-sm">
+                    <button class="accordion-header flex justify-between items-center w-full p-5 text-left font-semibold text-lg text-blue-900 hover:bg-slate-50">
+                        <span>4. Operational Cross-Training</span>
+                        <span class="accordion-icon transform rotate-0 transition-transform duration-300">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="p-5 pt-0 text-slate-600">
+                            <strong class="text-slate-700">Goal:</strong> Increase team resilience and flexibility.<br>
+                            <strong class="text-slate-700">Action:</strong> Cross-train at least two operators per shift on basic troubleshooting for critical equipment (e.g., HPU, Tongs) to reduce reliance on a single specialist.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center p-6 bg-slate-100 text-slate-500 text-sm mt-12">
+        Interactive Case Study Report | Generated from Supervisor Training Presentation
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            const nptData = {
+                target: 18,
+                actual: 26,
+                npt: 8
+            };
+
+            const ctx = document.getElementById('nptChart').getContext('2d');
+            const nptChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Target Operation Time', 'Actual Operation Time'],
+                    datasets: [
+                        {
+                            label: 'Target Time',
+                            data: [nptData.target, 0],
+                            backgroundColor: 'rgba(30, 64, 175, 0.7)', 
+                            borderColor: 'rgba(30, 64, 175, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Actual Time (with NPT)',
+                            data: [0, nptData.actual],
+                            backgroundColor: 'rgba(245, 158, 11, 0.7)',
+                            borderColor: 'rgba(245, 158, 11, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Hours'
+                            }
+                        },
+                        x: {
+                            stacked: true,
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null && context.parsed.y > 0) {
+                                        label += context.parsed.y + ' Hours';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            const tabsContainer = document.getElementById('tab-buttons');
+            const tabContent = document.getElementById('tab-content');
+            const tabButtons = tabsContainer.querySelectorAll('.tab-btn');
+            const tabPanes = tabContent.querySelectorAll('.tab-pane');
+
+            tabsContainer.addEventListener('click', (e) => {
+                const clickedTab = e.target.closest('.tab-btn');
+                if (!clickedTab) return;
+                
+                e.preventDefault();
+                
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                clickedTab.classList.add('active');
+                
+                tabPanes.forEach(pane => pane.classList.add('hidden'));
+                
+                const tabId = clickedTab.dataset.tab;
+                const activePane = document.getElementById(tabId + '-content');
+                if(activePane) {
+                    activePane.classList.remove('hidden');
+                }
+            });
+
+            const accordionContainer = document.getElementById('accordion-container');
+            accordionContainer.addEventListener('click', (e) => {
+                const header = e.target.closest('.accordion-header');
+                if (!header) return;
+
+                const item = header.parentElement;
+                const content = header.nextElementSibling;
+                const icon = header.querySelector('.accordion-icon');
+
+                const isOpen = content.style.maxHeight && content.style.maxHeight !== '0px';
+
+                if (isOpen) {
+                    content.style.maxHeight = '0px';
+                    icon.style.transform = 'rotate(0deg)';
+                } else {
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                    icon.style.transform = 'rotate(45deg)';
+                }
+            });
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section');
+
+            function onScroll() {
+                let currentSection = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (window.scrollY >= sectionTop - 100) {
+                        currentSection = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + currentSection) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            window.addEventListener('scroll', onScroll);
+            onScroll(); 
+        });
+    </script>
+</body>
+</html>
